@@ -1768,7 +1768,7 @@ end;
 
 procedure TMVCWebResponse.Flush;
 begin
-  if not FWebResponse.Sent then
+//  if not FWebResponse.Sent then
     FWebResponse.SendResponse;
 end;
 
@@ -3109,28 +3109,28 @@ begin
 
   if not AHandled then
   begin
-    try
+//    try
       AHandled := ExecuteAction(ASender, ARequest, AResponse);
-      if not AHandled then
-      begin
-        AResponse.ContentStream := nil;
-      end;
-    except
-      on E: Exception do
-      begin
-        Log.ErrorFmt('[%s] %s', [E.Classname, E.Message], LOGGERPRO_TAG);
-
-        AResponse.StatusCode := http_status.InternalServerError; // default is Internal Server Error
-        if E is EMVCException then
-        begin
-          AResponse.StatusCode := (E as EMVCException).HTTPErrorCode;
-        end;
-
-        AResponse.Content := E.Message;
-        AResponse.SendResponse;
-        AHandled := True;
-      end;
-    end;
+//      if not AHandled then
+//      begin
+//        AResponse.ContentStream := nil;
+//      end;
+//    except
+//      on E: Exception do
+//      begin
+//        Log.ErrorFmt('[%s] %s', [E.Classname, E.Message], LOGGERPRO_TAG);
+//
+//        AResponse.StatusCode := http_status.InternalServerError; // default is Internal Server Error
+//        if E is EMVCException then
+//        begin
+//          AResponse.StatusCode := (E as EMVCException).HTTPErrorCode;
+//        end;
+//
+//        AResponse.Content := E.Message;
+//        AResponse.SendResponse;
+//        AHandled := True;
+//      end;
+//    end;
   end;
 end;
 

@@ -660,6 +660,7 @@ begin
     TMVCIgnoredList(IgnoredFieldsCSV.Split([';',',']))))
 end;
 
+{TODO -odanielet -cdoene't work : ActionItem}
 procedure TTestServerController.ReqWithParams;
 begin
   Render(TJSONObject.Create.AddPair('par1', Context.Request.Params['par1']).AddPair('par2',

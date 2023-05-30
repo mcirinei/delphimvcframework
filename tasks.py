@@ -317,7 +317,7 @@ def tests32(ctx, delphi_version=DEFAULT_DELPHI_VERSION):
     print("\nBuilding Unit Test client")
     build_delphi_project(ctx, testclient, config="CI", delphi_version=delphi_version, platform="Win32")
     print("\nBuilding Test Server")
-    build_delphi_project(ctx, testserver, config="CI", delphi_version=delphi_version, platform="Win32")
+    build_delphi_project(ctx, testserver, config="CI", delphi_version=delphi_version, platform="Win64")
 
     # import subprocess
     # subprocess.run([r"unittests\general\TestServer\Win32\Debug\TestServer.exe"])

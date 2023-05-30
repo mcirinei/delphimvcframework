@@ -193,7 +193,7 @@ begin
         LEvt.SetEvent;
       end);
     TESTService.GetTonyStarkAsynch(AsynchRequest);
-    // attend for max 5 seconds
+    // waiting for max 5 seconds
     Assert.isTrue(TWaitResult.wrSignaled = LEvt.WaitFor(5000), 'Timeout request');
     Assert.IsNotNull(Person);
     try

@@ -15,7 +15,8 @@ uses
   {$ENDIF }
   {$IFDEF TESTINSIGHT}
   TestInsight.DUnitX,
-  {$ENDIF }
+  {$ENDIF}
+  DUnitX.Loggers.XML.NUnit,
   FrameworkTestsU in 'FrameworkTestsU.pas',
   LiveServerTestU in 'LiveServerTestU.pas',
   BOs in 'BOs.pas',

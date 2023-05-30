@@ -4,7 +4,11 @@
 
 uses
   System.SysUtils,
+  {$IF Defined(USE_INDY)}
   IdHTTPWebBrokerBridge,
+  {$ELSE}
+  MVCFramework.CrossSocket.WebBrokerBridge,
+  {$ENDIF}
   Web.WebReq,
   {$IFNDEF LINUX}
   Winapi.Windows,
@@ -46,6 +50,7 @@ begin
   {$IF Defined(Win32)} Writeln('WIN32'); {$ENDIF}
   {$IF Defined(Win64)} Writeln('WIN64'); {$ENDIF}
   {$IF Defined(Linux64)} Writeln('Linux64'); {$ENDIF}
+  WriteLn('BACKEND: ' + {$IF Defined(USE_INDY)}'INDY'{$ELSE}'CrossSocket'{$ENDIF});
   TextColor(TConsoleColor.Yellow);
   Writeln('DMVCFRAMEWORK VERSION: ', DMVCFRAMEWORK_VERSION);
   TextColor(TConsoleColor.White);
@@ -53,18 +58,21 @@ end;
 
 procedure RunServer(APort: Integer);
 var
-  LServer: TIdHTTPWebBrokerBridge;
+  LServer: {$IF Defined(USE_INDY)}TIdHTTPWebBrokerBridge{$ELSE}TMVCCrossSocketWebBrokerBridge{$ENDIF};
 begin
   Logo;
   Writeln(Format('Starting HTTP Server or port %d', [APort]));
-  LServer := TIdHTTPWebBrokerBridge.Create(nil);
+  LServer := {$IF Defined(USE_INDY)}TIdHTTPWebBrokerBridge{$ELSE}TMVCCrossSocketWebBrokerBridge{$ENDIF}.Create(nil);
   try
+    {$IF Defined(USE_INDY)}
     LServer.OnParseAuthentication :=
       TMVCParseAuthentication.OnParseAuthentication;
+    LServer.ListenQueue := 200;
+    LServer.MaxConnections := 0;
+    {$ENDIF}
+    LServer.UseCompression := False;
     LServer.DefaultPort := APort;
     LServer.Active := True;
-    LServer.MaxConnections := 0;
-    LServer.ListenQueue := 200;
     Writeln('Press RETURN to stop the server');
     WaitForReturn;
     TextColor(TConsoleColor.Red);
@@ -80,6 +88,7 @@ begin
   try
     if WebRequestHandler <> nil then
       WebRequestHandler.WebModuleClass := WebModuleClass;
+    WebRequestHandlerProc.MaxConnections := 0; {unlimited}
     RunServer(9999);
   except
     on E: Exception do
