@@ -594,8 +594,7 @@ begin
     fResponse.ContentType := ContentType;
     ContentStream.Position := 0;
     fResponse.Header.Add('Server', 'DelphiMVCFramework', False);
-    //fResponse.StatusCode := fStatusCode;
-    fResponse.SendStatus(fStatusCode, fReasonString);
+    fResponse.StatusCode := fStatusCode;
     fResponse.Send(ContentStream);
   end
   else

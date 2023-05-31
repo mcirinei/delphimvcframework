@@ -2919,9 +2919,9 @@ end;
 procedure TJSONRPCServerTest.TestHooksNotifWhenOnBeforeCallHookRaisesError;
 var
   lResp: IJSONRPCResponse;
+  lNotif: IJSONRPCNotification;
 begin
-  var
-    lNotif: IJSONRPCNotification := TJSONRPCNotification.Create('error_OnBeforeCallHook');
+  lNotif := TJSONRPCNotification.Create('error_OnBeforeCallHook');
   lResp := FExecutor3.ExecuteNotification(lNotif);
   Assert.areEqual('', FExecutor3.HTTPResponse.HeaderValue['x-history']);
   Assert.isTrue(lResp.IsError);
