@@ -108,7 +108,7 @@
         <VerInfo_MajorVer>3</VerInfo_MajorVer>
         <VerInfo_MinorVer>4</VerInfo_MinorVer>
         <DllSuffix>113</DllSuffix>
-        <DCC_Description>DMVCFramework - CopyRight (2010-2023) Daniele Teti and the DMVCFramework Team</DCC_Description>
+        <DCC_Description>DMVCFramework - Copyright (2010-2023) Daniele Teti and the DMVCFramework Team</DCC_Description>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>

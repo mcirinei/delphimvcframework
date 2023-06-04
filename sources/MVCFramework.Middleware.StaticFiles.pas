@@ -301,8 +301,7 @@ begin
   begin
     if not AContext.Request.PathInfo.EndsWith('/') then
     begin
-      AContext.Response.StatusCode := HTTP_STATUS.MovedPermanently;
-      AContext.Response.CustomHeaders.Values['Location'] := AContext.Request.PathInfo + '/';
+      AContext.Response.RawWebResponse.SendRedirect(AContext.Request.PathInfo + '/');
       AHandled := True;
       Exit;
     end;

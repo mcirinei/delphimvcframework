@@ -3811,16 +3811,19 @@ var
   R: TMVCErrorResponse;
 begin
   ResponseStatus(AStatusCode, AReasonMessage);
-  R := TMVCErrorResponse.Create;
-  try
-    R.StatusCode := AStatusCode;
-    R.ReasonString := HTTP_STATUS.ReasonStringFor(AStatusCode);
-    R.Message := AReasonMessage;
-    R.Classname := AErrorClassName;
-    R.Data := ADataObject;
-    Render(R, False, stProperties);
-  finally
-    R.Free;
+  if AStatusCode >= 300 then
+  begin
+    R := TMVCErrorResponse.Create;
+    try
+      R.StatusCode := AStatusCode;
+      R.ReasonString := HTTP_STATUS.ReasonStringFor(AStatusCode);
+      R.Message := AReasonMessage;
+      R.Classname := AErrorClassName;
+      R.Data := ADataObject;
+      Render(R, False, stProperties);
+    finally
+      R.Free;
+    end;
   end;
 end;
 

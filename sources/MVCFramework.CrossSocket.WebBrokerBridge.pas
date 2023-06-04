@@ -284,7 +284,7 @@ begin
     // Result := fRequest.Version;
     ReqIDX_URL:
       begin
-        Result := URLDecode(String(fRequest.Path));
+        Result := URLDecode(fRequest.Path);
       end;
     ReqIDX_Query:
       begin
@@ -578,9 +578,9 @@ end;
 
 procedure TMVCCrossSocketAppResponse.SendRedirect(const URI: string);
 begin
-  fResponse.Redirect(URI);
-  // fHeaders.Values['Location'] := URI;
-  // StatusCode := http_status.Found;
+  fResponse.Header.Add('Location', URI);
+  fResponse.SendStatus(HTTP_STATUS.MovedPermanently, '');
+//  fResponse.Redirect(URI);
 end;
 
 procedure TMVCCrossSocketAppResponse.SendResponse;

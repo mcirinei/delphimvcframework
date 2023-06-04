@@ -466,10 +466,10 @@ end;
 
 procedure TTestServerController.EchoBody;
 var
-  JSON: TJSONObject;
+  JSON: TJDOJsonObject;
 begin
-  JSON := TJSONObject.ParseJSONValue(Context.Request.Body) as TJSONObject;
-  JSON.AddPair('echo', 'from server');
+  JSON := StrToJSONObject(Context.Request.Body);
+  JSON.S['echo'] := 'from server';
   Render(JSON, True);
 end;
 
