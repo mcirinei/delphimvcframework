@@ -129,16 +129,19 @@ This page is a showcase for all the mustache features usable from DMVCFramework 
 	<p>
 		{{=<% %>=}} {{SnakeCase "daniele teti"}} <%={{ }}=%> outputs: {{SnakeCase "daniele teti"}}
 	</p>
+	<p>
+		{{=<% %>=}} {{i18n "daniele teti"}} <%={{ }}=%> outputs: {{i18n "ita","daniele teti"}}
+	</p>
 </div>
 
 <div>	
 	<h2 class="section">Using Project Specific Helpers</h2>
 	<h3>Any project can define its own custom helpers</h3>
 	<p>
-	{{MyHelper1 "this is a text"}}
+	{{MyHelper1 content,"browserhasnoemoji",nohtmlescape}}
 	</p>
 	<p>
-	{{MyHelper2 "this is another text"}}
+	{{MyHelper2 "this is another text"}}	
 	</p>
 </div>
 

@@ -31,8 +31,8 @@ interface
 
 uses
   MVCFramework, System.SysUtils, System.Generics.Collections,
-  MVCFramework.Commons, System.IOUtils, System.RTTI,
-  System.Classes, Data.DB, SynMustache, SynCommons;
+  MVCFramework.Commons, MVCFramework.Serializer.Commons, System.IOUtils,
+  System.RTTI, System.Classes, Data.DB, SynMustache, SynCommons;
 
 type
   { This class implements the mustache view engine for server side views }
@@ -48,6 +48,7 @@ type
   protected
     function RenderJSON(lViewEngine: TSynMustache; const JSON: RawUTF8; Partials: TSynMustachePartials;
       Helpers: TSynMustacheHelpers; OnTranslate: TOnStringTranslate; EscapeInvert: boolean): RawUTF8; virtual;
+    procedure Translate(var Text: string);
   public
     procedure Execute(const ViewName: string; const OutputStream: TStream); override;
     constructor Create(const AEngine: TMVCEngine; const AWebContext: TWebContext;
@@ -68,9 +69,12 @@ type
     class procedure ToUpperCase(const Value: variant; out Result: variant);
     class procedure Capitalize(const Value: variant; out Result: variant);
     class procedure SnakeCase(const Value: variant; out Result: variant);
+    class procedure i18n(const Value: variant; out Result: variant);
   public
     class property OnLoadCustomHelpers: TLoadCustomHelpersProc read fOnLoadCustomHelpers write fOnLoadCustomHelpers;
+    class function GetParams(const Value: Variant): TMVCStringDictionary;
   end;
+
 
 implementation
 
@@ -78,7 +82,6 @@ uses
   JsonDataObjects,
   MVCFramework.Serializer.Defaults,
   MVCFramework.Serializer.Intf,
-  MVCFramework.Serializer.Commons,
   MVCFramework.DuckTyping,
   MVCFramework.Serializer.JsonDataObjects.OptionalCustomTypes,
   MVCFramework.Serializer.JsonDataObjects;
@@ -115,7 +118,13 @@ end;
 function TMVCMustacheViewEngine.RenderJSON(lViewEngine: TSynMustache; const JSON: RawUTF8; Partials: TSynMustachePartials;
   Helpers: TSynMustacheHelpers; OnTranslate: TOnStringTranslate; EscapeInvert: boolean): RawUTF8;
 begin
+  OnTranslate := Translate;
   Result := lViewEngine.RenderJSON(JSON, Partials, Helpers, OnTranslate, EscapeInvert);
+end;
+
+procedure TMVCMustacheViewEngine.Translate(var Text: string);
+begin
+  Text := '*' + Text + '*';
 end;
 
 procedure TMVCMustacheViewEngine.Execute(const ViewName: string; const OutputStream: TStream);
@@ -270,12 +279,38 @@ begin
   Result := MVCFramework.Commons.CamelCase(Value, True);
 end;
 
+class function TMVCMustacheHelpers.GetParams(const Value: Variant): TMVCStringDictionary;
+var
+  d: PDocVariantData;
+  I: Integer;
+begin
+  d := _Safe(Value); // {{{SimpleToHtml content,browserhasnoemoji,nohtmlescape}}}
+  if (dvoIsArray in d^.Options) then
+  begin
+    var s: String := d^.Value[0];
+    var lPieces := s.Split([sLineBreak]);
+    Result := TMVCStringDictionary.Create;
+    for I := 0 to Length(lPieces) - 1 do
+    begin
+      var lP := lPieces[I].Split(['=']);
+      Result.Add(lP[0], lP[1]);
+    end;
+  end;
+end;
+
+class procedure TMVCMustacheHelpers.i18n(const Value: variant;
+  out Result: variant);
+begin
+  Result := '*' + value + '*';
+end;
+
 class procedure TMVCMustacheHelpers.RegisterHandlers(var MustacheHelpers: TSynMustacheHelpers);
 begin
   TSynMustache.HelperAdd(MustacheHelpers, 'UpperCase', TMVCMustacheHelpers.ToUpperCase);
   TSynMustache.HelperAdd(MustacheHelpers, 'LowerCase', TMVCMustacheHelpers.ToLowerCase);
   TSynMustache.HelperAdd(MustacheHelpers, 'Capitalize', TMVCMustacheHelpers.Capitalize);
   TSynMustache.HelperAdd(MustacheHelpers, 'SnakeCase', TMVCMustacheHelpers.SnakeCase);
+  TSynMustache.HelperAdd(MustacheHelpers, 'i18n', TMVCMustacheHelpers.SnakeCase);
   if Assigned(fOnLoadCustomHelpers) then
   begin
     fOnLoadCustomHelpers(MustacheHelpers);

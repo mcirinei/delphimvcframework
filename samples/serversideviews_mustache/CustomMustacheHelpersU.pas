@@ -39,14 +39,21 @@ type
 implementation
 
 uses
-  MVCFramework.View.Renderers.Mustache, System.SysUtils;
+  MVCFramework.View.Renderers.Mustache, System.SysUtils, MVCFramework.Commons;
 
 { TMyMustacheHelpers }
 
 class procedure TMyMustacheHelpers.MyHelper1(const Value: variant;
   out Result: variant);
+var
+  lParams: TMVCStringDictionary;
 begin
-  Result := Value +  ' (I''m The MyHelper1)';
+  lParams := TMVCMustacheHelpers.GetParams(Value);
+  try
+    Result := Value +  ' (I''m The MyHelper1)';
+  finally
+    lParams.Free;
+  end;
 end;
 
 class procedure TMyMustacheHelpers.MyHelper2(const Value: variant; out Result: variant);
